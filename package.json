@@ -10,9 +10,12 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^1.24.0",
+    "bootstrap-icons": "^1.6.0",
     "next": "11.1.2",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-bootstrap": "^1.6.4",
+    "react-dom": "17.0.2",
+    "react-intl": "^5.20.12"
   },
   "devDependencies": {
     "@types/react": "17.0.27",
