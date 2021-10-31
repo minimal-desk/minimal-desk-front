@@ -1,4 +1,4 @@
-import { EmbedCodeItem } from "../../domains/EmbedCodeItem";
+import { EmbedCodeItem } from "../../domains/project/EmbedCodeItem";
 
 export interface EmbedCodeService {
   embedCodes(): { embedCodeItem: EmbedCodeItem }

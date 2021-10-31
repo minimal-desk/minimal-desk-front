@@ -1,6 +1,6 @@
 import { FaqTopic } from "./FaqTopic";
 
-interface FaqPage {
+interface FaqContents {
   listId: String;
   topics: [FaqTopic];
 }
