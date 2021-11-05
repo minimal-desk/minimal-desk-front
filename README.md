@@ -2,7 +2,7 @@ Front-end of MinimalDesk
 
 ## react-intl
 基本的に下記の書き方でOK
-```
+```:js
 <FormattedMessage
   id="IntlDemo.h1"
   defaultMessage="Welcome to Next.js!" 
