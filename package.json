@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "extract": "extract-messages -d en -l=en,ja --flat true  -o translations 'src/**/*.tsx'"
   },
   "dependencies": {
     "@supabase/supabase-js": "^1.24.0",
@@ -21,6 +22,7 @@
     "@types/react": "17.0.27",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2",
+    "extract-react-intl-messages": "^4.1.1",
     "typescript": "4.4.3"
   }
 }
