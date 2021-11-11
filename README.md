@@ -21,7 +21,8 @@ const { formatMessage } = useIntl();
 <Button label={formatMessage({id: "IntlDemo.h1", defaultMessage: "Welcome to Next.js!"})} />
 ```
 
-react component以外（`IntlProvider`がない状況）で使う場合
+react component以外（`IntlProvider`がない状況）で使う場合。react componentで指定しているtranslationのjsonファイルと設定を同期させてない（個別にファイルを参照している）ので多言語対応機能をユーザーに提供する際は要修正。
+
 ```js
 import { intlObject } from "./utils/intlObject";
 
