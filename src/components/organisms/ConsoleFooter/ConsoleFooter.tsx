@@ -1,6 +1,5 @@
 import { FormattedMessage } from "react-intl";
 import Link from "next/link";
-import "bootstrap/dist/css/bootstrap.min.css";
 import styles from "./ConsoleFooter.module.css";
 
 interface ConsoleFooterProps {
