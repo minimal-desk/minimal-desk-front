@@ -1,4 +1,4 @@
-import { FormattedMessage } from "react-intl"
+import { FormattedMessage } from "react-intl";
 
 
 export const IntlDemo: React.FC  = props => {
@@ -10,4 +10,4 @@ export const IntlDemo: React.FC  = props => {
       />
     </h1>
   )
-}
+};

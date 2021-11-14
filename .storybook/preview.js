@@ -1,5 +1,6 @@
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.js";
+import { addIntl } from "./reactIntl";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -10,3 +11,7 @@ export const parameters = {
     },
   },
 };
+
+export const decorators = [
+  (story) => (addIntl(story)),
+];
