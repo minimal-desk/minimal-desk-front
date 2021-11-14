@@ -1,5 +1,6 @@
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.js";
+import "../src/styles/globals.css";
 import { addIntl } from "./reactIntl";
 
 export const parameters = {
