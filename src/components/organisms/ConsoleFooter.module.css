@@ -1,0 +1,27 @@
+.container {
+  background-color: #F8F9FA;
+}
+
+.container ul {
+  list-style: none;
+  padding: 0;
+  margin: 2rem auto 0.5rem;
+}
+
+.container li {
+  display: inline-block;
+  margin-right: 1rem;
+  margin-bottom: 0;
+}
+
+.container a, p {
+  color: #68717A;
+}
+
+.container a {
+  font-weight: bold;
+}
+
+.container p {
+  margin: 0 auto 2rem;
+}
