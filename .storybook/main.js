@@ -5,5 +5,6 @@ module.exports = {
     "@storybook/addon-essentials",
     "storybook-addon-designs",
     "storybook-addon-intl",
+    "storybook-css-modules-preset",
   ],
 };
