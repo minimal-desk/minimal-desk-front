@@ -1,0 +1,19 @@
+.titleRow {
+  display: flex;
+  flex-direction: row;
+  
+  justify-content: space-between;
+}
+
+.titleRow p {
+  margin: 0;
+}
+
+.titleRow button {
+  width: 40px;
+  height: 40px;
+}
+
+.contents {
+  margin: 0.5rem auto 0;
+}
