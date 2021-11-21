@@ -23,7 +23,7 @@ export const QaItem = ({
       <div className={styles.titleRow}>
         <p className="fw-bold text-body">{title}</p>
         <button 
-          className="btn btn-light" 
+          className={"btn btn-light " + styles.menuButton} 
           type="button" 
           id={"dropdown-" + itemId} 
           data-bs-toggle="dropdown" 
