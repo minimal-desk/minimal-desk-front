@@ -1,4 +1,4 @@
-import { ComponentStory, ComponentMeta, Meta, Story } from "@storybook/react";
+import { Meta, Story } from "@storybook/react";
 import { QaItem } from "./QaItem";
 
 export default {
@@ -11,8 +11,8 @@ const Template: Story = (args) =>
     title={args.title} 
     contents={args.contents} 
     itemId={args.itemId} 
-    onClickEdit={(_)=>{}}
     onClickDelete={(_)=>{}}
+    onUpdate={(_)=>{}}
     {...args} />;
 
 export const Default = Template.bind({});
@@ -27,5 +27,6 @@ Default.parameters = {
   design: {
     type: "figma",
     url: "https://www.figma.com/file/QB5lkQFD4JsxXCmrPbqYN8/Bootstrap-UI?node-id=2772%3A1381"
-  } 
+  },
+
 };
