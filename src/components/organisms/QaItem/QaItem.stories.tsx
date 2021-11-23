@@ -2,7 +2,7 @@ import { Meta, Story } from "@storybook/react";
 import { QaItem } from "./QaItem";
 
 export default {
-  title: "Molecules/QaItem",
+  title: "Organisms/QaItem",
   component: QaItem,
 } as Meta;
 
@@ -28,5 +28,4 @@ Default.parameters = {
     type: "figma",
     url: "https://www.figma.com/file/QB5lkQFD4JsxXCmrPbqYN8/Bootstrap-UI?node-id=2772%3A1381"
   },
-
 };

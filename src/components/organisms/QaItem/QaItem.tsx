@@ -7,7 +7,7 @@ export interface QaItemProps extends QaContents {
   onUpdate:(contents: QaContents) => void;
 }
 
-interface QaContents {
+export interface QaContents {
   title: string;
   contents: string;
   itemId: string;
@@ -98,7 +98,6 @@ export const QaItem = ({
   itemId,
   onClickDelete,
   onUpdate,
-  ...props
 }: QaItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   if (isEditing) {
