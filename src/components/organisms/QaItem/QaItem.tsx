@@ -24,7 +24,7 @@ const StaticItem = (props: StaticItemProps) => (
       <div className={styles.titleRow}>
         <p className="fw-bold text-body">{props.title}</p>
         <button 
-          className={"btn btn-light " + styles.menuButton} 
+          className={"btn " + styles.menuButton} 
           type="button" 
           id={"dropdown-" + props.itemId} 
           data-bs-toggle="dropdown" 
