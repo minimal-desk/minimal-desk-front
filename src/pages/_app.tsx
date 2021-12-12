@@ -1,6 +1,6 @@
 import '../styles/globals.css';
 import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap/dist/js/bootstrap.js";
+import * as bootstrap from "bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import type { AppProps } from 'next/app';
 import { IntlProvider } from 'react-intl';
