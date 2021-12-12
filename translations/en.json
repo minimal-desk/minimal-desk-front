@@ -1,4 +1,9 @@
 {
   "IntlDemo.h1": "Welcome to Next.js!",
-  "IntlDemo.h12": "Hi"
+  "IntlDemo.h12": "Hi",
+  "Email":"Email",
+  "Password":"Password",
+  "Update":"Update",
+  "Delete account":"Delete account",
+  "Account settings" :"Account settings"
 }
