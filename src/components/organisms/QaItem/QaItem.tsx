@@ -62,44 +62,44 @@ const StaticItem = ({ title, contents, itemId, topicIndex, index, onClickDelete,
   >({
     accept: ItemTypes.QA,
     collect(monitor) {
-      return { handlerId: monitor.getHandlerId() }
+      return { handlerId: monitor.getHandlerId() };
     },
     hover(item: DragItem, monitor) {
       if (!ref.current) {
-        return
+        return;
       }
-      const dragTopicIndex = item.topicIndex
-      const dragIndex = item.index
+      const dragTopicIndex = item.topicIndex;
+      const dragIndex = item.index;
       
-      const hoverTopicIndex = topicIndex
-      const hoverIndex = index
+      const hoverTopicIndex = topicIndex;
+      const hoverIndex = index;
 
-      const dragOrder = dragTopicIndex == hoverTopicIndex ? dragIndex : dragTopicIndex
-      const hoverOrder = dragTopicIndex == hoverTopicIndex ? hoverIndex : hoverTopicIndex
+      const dragOrder = dragTopicIndex == hoverTopicIndex ? dragIndex : dragTopicIndex;
+      const hoverOrder = dragTopicIndex == hoverTopicIndex ? hoverIndex : hoverTopicIndex;
 
       if (dragIndex === hoverIndex && dragTopicIndex === hoverTopicIndex) {
-        return
+        return;
       }
 
-      const hoverBoundingRect = ref.current?.getBoundingClientRect()
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
       const hoverMiddleY = 
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
       
-      const clientOffset = monitor.getClientOffset()
+      const clientOffset = monitor.getClientOffset();
 
-      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top
+      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
 
       if (dragOrder < hoverOrder && hoverClientY < hoverMiddleY) {
-        return
+        return;
       }
 
       if (dragOrder > hoverOrder && hoverClientY > hoverMiddleY) {
-        return
+        return;
       }
 
-      moveQaItem(dragTopicIndex, dragIndex, hoverTopicIndex, hoverIndex)
-      item.topicIndex = hoverTopicIndex
-      item.index = hoverIndex
+      moveQaItem(dragTopicIndex, dragIndex, hoverTopicIndex, hoverIndex);
+      item.topicIndex = hoverTopicIndex;
+      item.index = hoverIndex;
 
     },
   });

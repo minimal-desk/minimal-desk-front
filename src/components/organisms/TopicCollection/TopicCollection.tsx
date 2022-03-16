@@ -30,20 +30,20 @@ export const TopicCollection = ({
         ],
       }),
     );
-  }, [])
+  }, []);
 
 
   const moveQaItem = useCallback((
     dragTopicIndex: number, dragQaIndex: number, 
     hoverTopicIndex: number, hoverQaIndex: number) => {
     setItems((prevItems: TopicContents[]) => {
-      const copied = [...prevItems]
-      const qaItem = [...prevItems][dragTopicIndex].items[dragQaIndex]
-      copied[dragTopicIndex].items.splice(dragQaIndex, 1)
-      copied[hoverTopicIndex].items.splice(hoverQaIndex, 0, qaItem)
-      return copied
+      const copied = [...prevItems];
+      const qaItem = [...prevItems][dragTopicIndex].items[dragQaIndex];
+      copied[dragTopicIndex].items.splice(dragQaIndex, 1);
+      copied[hoverTopicIndex].items.splice(hoverQaIndex, 0, qaItem);
+      return copied;
     });
-  }, [])
+  }, []);
 
   return(
     <DndProvider backend={HTML5Backend}>
