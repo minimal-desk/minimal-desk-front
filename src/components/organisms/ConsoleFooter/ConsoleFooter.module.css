@@ -1,5 +1,8 @@
 .container {
-  background-color: #F8F9FA;
+  background-color: #f8f9fa;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 .container ul {
@@ -14,14 +17,12 @@
   margin-bottom: 0;
 }
 
-.container a, p {
-  color: #68717A;
-}
-
 .container a {
+  color: #68717a;
   font-weight: bold;
 }
 
 .container p {
+  color: #68717a;
   margin: 0 auto 2rem;
 }
