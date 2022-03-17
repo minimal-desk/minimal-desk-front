@@ -1,19 +1,27 @@
 import { Meta, Story } from "@storybook/react";
 import { QaItem } from "./QaItem";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 export default {
   title: "Organisms/QaItem",
   component: QaItem,
 } as Meta;
 
-const Template: Story = (args) => 
-  <QaItem 
-    title={args.title} 
-    contents={args.contents} 
-    itemId={args.itemId} 
-    onClickDelete={(_)=>{}}
-    onUpdate={(_)=>{}}
-    {...args} />;
+const Template: Story = (args) => (
+  <DndProvider backend={HTML5Backend}>
+    <QaItem 
+      title={args.title} 
+      contents={args.contents} 
+      itemId={args.itemId} 
+      onClickDelete={(_)=>{}}
+      onUpdate={(_)=>{}}
+      topicIndex={0}
+      index={0}
+      moveQaItem={(_)=>{}}
+      {...args} />
+  </DndProvider>
+);
 
 export const Default = Template.bind({});
 

@@ -1,6 +1,8 @@
 import { Meta, Story } from "@storybook/react";
 import { TopicItem } from "./TopicItem";
 import { QaContents } from "../QaItem/QaItem";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 export default {
   "title": "Organisms/TopicItem",
@@ -8,11 +10,18 @@ export default {
 } as Meta;
 
 const Template: Story = (args) => (
-  <TopicItem 
-    topicTitle={args.topicTitle} 
-    topicId={args.topicId} 
-    items={args.items} 
-  />
+  <DndProvider backend={HTML5Backend}>
+    <TopicItem 
+      topicTitle={args.topicTitle} 
+      topicId={args.topicId} 
+      items={args.items} 
+      index={0}
+      moveTopic={()=>{}}
+      moveQa={()=>{}}
+      onClickDelete={()=>{}}
+      onUpdate={()=>{}}
+    />
+  </DndProvider>
 );
 
 const items:QaContents[] = [
@@ -30,7 +39,6 @@ const items:QaContents[] = [
 ]
 
 export const Default = Template.bind({});
-
 
 Default.args = {
   topicTitle: "Topic",
