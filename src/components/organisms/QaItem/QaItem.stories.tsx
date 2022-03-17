@@ -14,8 +14,8 @@ const Template: Story = (args) => (
       title={args.title} 
       contents={args.contents} 
       itemId={args.itemId} 
-      onClickDelete={(_)=>{}}
-      onUpdate={(_)=>{}}
+      requestDeleteQaItem={()=>{}}
+      requestUpdateItem={()=>{}}
       topicIndex={0}
       index={0}
       moveQaItem={(_)=>{}}

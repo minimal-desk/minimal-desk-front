@@ -18,8 +18,10 @@ const Template: Story = (args) => (
       index={0}
       moveTopic={()=>{}}
       moveQa={()=>{}}
-      onClickDelete={()=>{}}
-      onUpdate={()=>{}}
+      requestDeleteQaItem={()=>{}}
+      requestDeleteTopic={()=>{}}
+      requestUpdateTopicTitle={()=>{}}
+      requestUpdateQaItem={()=>{}}
     />
   </DndProvider>
 );

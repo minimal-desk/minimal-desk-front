@@ -1,10 +1,8 @@
-import { FormattedMessage } from "react-intl";
 import { QaCollection } from "../QaCollection/QaCollection";
 import { QaContents } from "../QaItem/QaItem";
-import styles from "./TopicItem.module.css";
 import React, { useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import { ItemTypes } from "../TopicCollection/TopicCollection";
+import { DeleteQaItemCallback, DeleteTopicCallback, ItemTypes, MoveQaItemCallback, MoveTopicCallback, UpdateQaItemCallback, UpdateTopicTitleCallback } from "../TopicCollection/TopicCollection";
 import type { XYCoord, Identifier } from 'dnd-core'
 import { EndEditingButtons } from "../../molecules/EndItemEditingControls/EndEditingButtons";
 import { EditorDropdownMenu } from "../../molecules/DropdownMenu/DropdownMenu";
@@ -19,15 +17,15 @@ export type TopicContents = {
 
 type TopicItemDragProps = {
   index: number;
-  moveTopic: (dragIndex: number, hoverIndex: number) => void;
-  moveQa: (dragTopicIndex: number, dragQaIndex: number, 
-    hoverTopicIndex: number, hoverQaIndex: number) => void;
+  moveTopic: MoveTopicCallback;
+  moveQa: MoveQaItemCallback;
 };
 
 type TopicDisplayItemProps = TopicContents & TopicItemDragProps & {
-  requestDeleteTopic: (index: number) => void;
-  requestDeleteQaItem: (topicIndex: number, index: number) => void;
-  onUpdate: (topicItem: TopicContents) => void;
+  requestDeleteTopic: DeleteTopicCallback;
+  requestDeleteQaItem: DeleteQaItemCallback;
+  requestUpdateTopicTitle: UpdateTopicTitleCallback;
+  requestUpdateQaItem: UpdateQaItemCallback;
 };
 
 type StaticTopicHeaderProps = TopicContents & TopicItemDragProps & {
@@ -37,7 +35,7 @@ type StaticTopicHeaderProps = TopicContents & TopicItemDragProps & {
 
 type EditingTopicHeaderProps = TopicContents & {
   onClickCancel: () => void;
-  onClickDone: (topicItem: TopicContents) => void;
+  onClickDone: (topicTitle: string) => void;
 };
 
 type DragItem = {
@@ -54,7 +52,8 @@ export const TopicItem = ({
   moveQa,
   requestDeleteTopic,
   requestDeleteQaItem,
-  onUpdate
+  requestUpdateTopicTitle,
+  requestUpdateQaItem
 }: TopicDisplayItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -127,9 +126,9 @@ export const TopicItem = ({
               topicTitle={topicTitle} topicId={topicId} items={items} 
               onClickCancel={()=>{setIsEditing(false)}}
               onClickDone={
-                (topicItem)=>{
+                (newTitle)=>{
                   setIsEditing(false);
-                  onUpdate(topicItem);
+                  requestUpdateTopicTitle(index, newTitle);
                 }}
             />
           : <StaticTopicHeader 
@@ -141,7 +140,7 @@ export const TopicItem = ({
               moveQa={moveQa}
             />
         }
-        <QaCollection items={items} moveQa={moveQa} topicIndex={index} requestDeleteQaItem={requestDeleteQaItem} />
+        <QaCollection items={items} moveQa={moveQa} topicIndex={index} requestDeleteQaItem={requestDeleteQaItem} requestUpdateQaItem={requestUpdateQaItem} />
       </div>
     </div>
   );
@@ -181,7 +180,7 @@ const EditingTopicHeader = (props: EditingTopicHeaderProps) => {
       <input className="form-control" type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
       
       <EndEditingButtons
-        onClickDone={() => {props.onClickDone(props)}}
+        onClickDone={() => {props.onClickDone(title)}}
         onClickCancel={props.onClickCancel} 
       />
     </div>

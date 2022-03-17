@@ -3,17 +3,19 @@ import styles from "./QaItem.module.css";
 import React, { useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import type { XYCoord, Identifier } from "dnd-core";
-import { ItemTypes } from "../TopicCollection/TopicCollection";
+import { DeleteQaItemCallback, ItemTypes, MoveQaItemCallback, UpdateQaItemCallback } from "../TopicCollection/TopicCollection";
 import { EndEditingButtons } from "../../molecules/EndItemEditingControls/EndEditingButtons";
 import { EditorDropdownMenu } from "../../molecules/DropdownMenu/DropdownMenu";
 
-type QaDisplayItem = QaContents & {
+type QaDisplayItem = QaContents & QaItemDragProps & {
+  requestDeleteQaItem: DeleteQaItemCallback;
+  requestUpdateItem: UpdateQaItemCallback;
+};
+
+type QaItemDragProps = {
   topicIndex: number;
   index: number;
-  moveQaItem: (dragTopicIndex: number, dragQaIndex: number, 
-    hoverTopicIndex: number, hoverQaIndex: number) => void;
-  requestDeleteQaItem: (topicIndex: number, index: number) => void;
-  onUpdate:(contents: QaContents) => void;
+  moveQaItem: MoveQaItemCallback;
 };
 
 export type QaContents = {
@@ -22,13 +24,9 @@ export type QaContents = {
   itemId: string;
 };
 
-type StaticItemProps = QaContents & {
+type StaticItemProps = QaContents & QaItemDragProps & {
   onClickEdit: () => void;
   onClickDelete: () => void;
-  topicIndex: number;
-  index: number;
-  moveQaItem: (dragTopicIndex: number, dragQaIndex: number, 
-    hoverTopicIndex: number, hoverQaIndex: number) => void;
 };
 
 type EditingProps = QaContents & {
@@ -143,7 +141,7 @@ const EditingItem = (props: EditingProps) => {
           </div>
 
           <EndEditingButtons 
-            onClickDone={() => props.onClickDone(props)}
+            onClickDone={() => props.onClickDone({title: title, contents: contents, itemId: props.itemId})}
             onClickCancel={props.onClickCancel}
           />
         </form>
@@ -157,7 +155,7 @@ export const QaItem = ({
   contents,
   itemId,
   requestDeleteQaItem,
-  onUpdate,
+  requestUpdateItem,
   topicIndex,
   index,
   moveQaItem
@@ -169,8 +167,8 @@ export const QaItem = ({
       <EditingItem 
         title={title} contents={contents} itemId={itemId} 
         onClickCancel={() => {setIsEditing(false)}} 
-        onClickDone={(c) => {
-          onUpdate(c);
+        onClickDone={(newContents) => {
+          requestUpdateItem(topicIndex, index, newContents);
           setIsEditing(false);
         }} 
       />

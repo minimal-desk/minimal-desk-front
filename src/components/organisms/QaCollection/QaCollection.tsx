@@ -1,12 +1,13 @@
 import { QaContents, QaItem } from "../QaItem/QaItem";
+import { DeleteQaItemCallback, MoveQaItemCallback, UpdateQaItemCallback } from "../TopicCollection/TopicCollection";
 import styles from "./QaCollection.module.css";
 
 type QaCollectionProps = {
   topicIndex: number;
   items: QaContents[];
-  moveQa: (dragTopicIndex: number, dragQaIndex: number, 
-    hoverTopicIndex: number, hoverQaIndex: number) => void;
-    requestDeleteQaItem: (topicIndex: number, index: number) => void;
+  moveQa: MoveQaItemCallback;
+  requestDeleteQaItem: DeleteQaItemCallback;
+  requestUpdateQaItem: UpdateQaItemCallback
 }
 
 export const QaCollection = ({
@@ -14,7 +15,7 @@ export const QaCollection = ({
   topicIndex,
   moveQa,
   requestDeleteQaItem,
-  ...props
+  requestUpdateQaItem,
 }: QaCollectionProps) => {
   return (
     <div>
@@ -26,7 +27,7 @@ export const QaCollection = ({
               contents={item.contents} 
               itemId={item.itemId} 
               requestDeleteQaItem={requestDeleteQaItem}
-              onUpdate={(c)=>{}}
+              requestUpdateItem={requestUpdateQaItem}
               topicIndex={topicIndex}
               index={index}
               moveQaItem={moveQa}
