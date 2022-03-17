@@ -4,8 +4,10 @@ import React, { useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import type { XYCoord, Identifier } from "dnd-core";
 import { ItemTypes } from "../TopicCollection/TopicCollection";
+import { EndEditingButtons } from "../../molecules/EndItemEditingControls/EndEditingButtons";
+import { EditorDropdownMenu } from "../../molecules/DropdownMenu/DropdownMenu";
 
-export interface QaDisplayItem extends QaContents {
+interface QaDisplayItem extends QaContents {
   topicIndex: number;
   index: number;
   moveQaItem: (dragTopicIndex: number, dragQaIndex: number, 
@@ -45,7 +47,7 @@ const StaticItem = ({ title, contents, itemId, topicIndex, index, onClickDelete,
  
   const ref = useRef<HTMLDivElement>(null);
 
-  const [, drag] = useDrag({
+  const [{isDragging} , drag] = useDrag({
     type: ItemTypes.QA,
     item: () => {
       return { itemId, index, topicIndex }
@@ -104,35 +106,19 @@ const StaticItem = ({ title, contents, itemId, topicIndex, index, onClickDelete,
     },
   });
 
+  const opacity = isDragging ? 0.5 : 1
   drag(drop(ref));
 
   return (
-    <div className="card" ref={ref} data-handler-id={handlerId}>
+    <div className="card" ref={ref} data-handler-id={handlerId} style={{opacity}}>
       <div className="card-body">
         <div className={styles.titleRow}>
           <p className="fw-bold text-body">{title}</p>
-          <button 
-            className={"btn " + styles.menuButton} 
-            type="button" 
-            id={"dropdown-" + itemId} 
-            data-bs-toggle="dropdown" 
-            aria-expanded="false"
-          >
-            <i className="bi bi-three-dots"></i>
-          </button>
-          <ul className="dropdown-menu" aria-labelledby={"dropdown-" + itemId}>
-            <li>
-              <button className="dropdown-item" onClick={()=>onClickEdit()}>
-                <FormattedMessage id="QaItem.Edit" defaultMessage="Edit" />
-              </button>
-            </li>
-
-            <li>
-              <button className="dropdown-item" onClick={()=>onClickDelete()}>
-                <FormattedMessage id="QaItem.Delete" defaultMessage="Delete" />
-              </button>
-            </li>
-          </ul>
+          <EditorDropdownMenu 
+            menuId={"dropdown-" + itemId}
+            onClickEdit={onClickEdit}
+            onClickDelete={onClickDelete}
+          />
         </div>
         <p className={"text-secondary " + styles.contents}>{contents}</p>
       </div>
@@ -156,19 +142,11 @@ const EditingItem = (props: EditingProps) => {
             <label className="form-text mx-1 mb-1 text-secondary"><FormattedMessage id="QaItem.Editing.Contents" defaultMessage="Contents" /></label>
             <textarea className="form-control" rows={3} value={contents} onChange={(e) => setContents(e.target.value)} />
           </div>
-          <div className="d-flex justify-content-end">
-            <button type="button" className="btn btn-secondary" onClick={props.onClickCancel}>
-              <FormattedMessage id="QaItem.Editing.Cancel" defaultMessage="Cancel" />
-            </button>
 
-            <button 
-              type="button" 
-              className="btn btn-primary" 
-              onClick={() => props.onClickDone({title: props.title, contents: props.contents, itemId: props.itemId})}
-            >
-              <FormattedMessage id="QaItem.Editing.Done" defaultMessage="Done" />
-            </button>
-          </div>
+          <EndEditingButtons 
+            onClickDone={() => props.onClickDone(props)}
+            onClickCancel={props.onClickCancel}
+          />
         </form>
       </div>
     </div>

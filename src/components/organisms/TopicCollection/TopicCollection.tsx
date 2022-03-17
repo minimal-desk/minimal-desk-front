@@ -6,7 +6,7 @@ import update from "immutability-helper";
 import styles from "./TopicCollection.module.css";
 
 
-export interface TopicCollectionProps {
+interface TopicCollectionProps {
   topicItems: TopicContents[];
 }
 

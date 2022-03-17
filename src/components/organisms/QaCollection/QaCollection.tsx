@@ -1,7 +1,7 @@
 import { QaContents, QaItem } from "../QaItem/QaItem";
 import styles from "./QaCollection.module.css";
 
-export interface QaCollectionProps {
+interface QaCollectionProps {
   topicIndex: number;
   items: QaContents[];
   moveQa: (dragTopicIndex: number, dragQaIndex: number, 

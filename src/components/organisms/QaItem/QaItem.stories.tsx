@@ -16,6 +16,7 @@ const Template: Story = (args) => (
       itemId={args.itemId} 
       onClickDelete={(_)=>{}}
       onUpdate={(_)=>{}}
+      topicIndex={0}
       index={0}
       moveQaItem={(_)=>{}}
       {...args} />

@@ -6,6 +6,10 @@ import React, { useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { ItemTypes } from "../TopicCollection/TopicCollection";
 import type { XYCoord, Identifier } from 'dnd-core'
+import { EndEditingButtons } from "../../molecules/EndItemEditingControls/EndEditingButtons";
+import { EditorDropdownMenu } from "../../molecules/DropdownMenu/DropdownMenu";
+import { EditorButton } from "../../atoms/EditorButton/EditorButton";
+import { useIntl } from "react-intl";
 
 export interface TopicContents {
   topicTitle: string;
@@ -13,7 +17,7 @@ export interface TopicContents {
   items: QaContents[];
 }
 
-export interface TopicDisplayItemProps extends TopicContents {
+interface TopicDisplayItemProps extends TopicContents {
   index: number;
   moveTopic: (dragIndex: number, hoverIndex: number) => void;
   moveQa: (dragTopicIndex: number, dragQaIndex: number, 
@@ -64,6 +68,9 @@ export const TopicItem = ({
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
+    canDrag(_){
+      return !isEditing
+    }
   })
 
   const [{ handlerId }, drop] = useDrop<
@@ -108,17 +115,22 @@ export const TopicItem = ({
     },
   })
 
+  const opacity = isDragging ? 0.5 : 1
   drag(drop(ref));
 
   return(
-    <div ref={ref} data-handler-id={handlerId} className="card bg-light">
+    <div ref={ref} data-handler-id={handlerId} className="card bg-light" style={{opacity}}>
       <div className="card-body">
         {
           isEditing
           ? <EditingTopicHeader 
               topicTitle={topicTitle} topicId={topicId} items={items} 
               onClickCancel={()=>{setIsEditing(false)}}
-              onClickDone={(topicItem)=>{onUpdate(topicItem)}}
+              onClickDone={
+                (topicItem)=>{
+                  setIsEditing(false);
+                  onUpdate(topicItem);
+                }}
             />
           : <StaticTopicHeader 
               topicTitle={topicTitle} topicId={topicId} items={items}
@@ -135,9 +147,8 @@ export const TopicItem = ({
   );
 }
 
-const StaticTopicHeader = ({ topicTitle, topicId, index, moveTopic, onClickEdit, onClickDelete }: StaticTopicHeaderProps) => {
-
-  
+const StaticTopicHeader = ({ topicTitle, topicId, onClickEdit, onClickDelete }: StaticTopicHeaderProps) => {
+  const { formatMessage } = useIntl();
 
   return (
     <div 
@@ -145,35 +156,19 @@ const StaticTopicHeader = ({ topicTitle, topicId, index, moveTopic, onClickEdit,
     >
       <div className="fw-bold lead">{topicTitle}</div>
       <div>
-        <button
-          className={"btn btn-light " + styles.menuButton}
-          type="button"
+        <EditorButton
+          onClick={()=>{}}
         >
           <i className="bi bi-plus"></i>
-        </button>
+        </EditorButton>
 
-        <button 
-        className={"btn btn-light "  + styles.menuButton} 
-        type="button" 
-        id={"dropdown-" + topicId} 
-        data-bs-toggle="dropdown" 
-        aria-expanded="false"
-      >
-        <i className="bi bi-three-dots"></i>
-      </button>
-      <ul className="dropdown-menu" aria-labelledby={"dropdown-" + topicId}>
-        <li>
-          <button className="dropdown-item" onClick={()=>{onClickEdit()}}>
-            <FormattedMessage id="TopicItem.Edit" defaultMessage="Edit topic name" />
-          </button>
-        </li>
-
-        <li>
-          <button className="dropdown-item" onClick={()=>{onClickDelete()}}>
-            <FormattedMessage id="TopicItem.Delete" defaultMessage="Delete topic" />
-          </button>
-        </li>
-      </ul>
+        <EditorDropdownMenu
+          menuId={"dropdown-" + topicId}
+          onClickEdit={onClickEdit}
+          onClickDelete={onClickDelete} 
+          editButtonTitle={formatMessage({id: "TopicItem.Menu.Edit", defaultMessage: "Edit Topic Title"})}
+          deleteButtonTitle={formatMessage({id: "TopicItem.Menu.Delete", defaultMessage: "Delete Topic"})}
+        />
       </div>
     </div>
   );
@@ -185,17 +180,10 @@ const EditingTopicHeader = (props: EditingTopicHeaderProps) => {
     <div className="d-flex justify-content-between">
       <input className="form-control" type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
       
-      <button type="button" className="btn btn-secondary ms-4" onClick={props.onClickCancel}>
-        <FormattedMessage id="TopicItem.Editing.Cancel" defaultMessage="Cancel" />
-      </button>
-
-      <button 
-        type="button" 
-        className="btn btn-primary" 
-        onClick={() => props.onClickDone({topicTitle: props.topicTitle, topicId: props.topicId, items: props.items})}
-      >
-        <FormattedMessage id="TopicItem.Editing.Done" defaultMessage="Done" />
-      </button>
+      <EndEditingButtons
+        onClickDone={() => {props.onClickDone(props)}}
+        onClickCancel={props.onClickCancel} 
+      />
     </div>
   );
 }
