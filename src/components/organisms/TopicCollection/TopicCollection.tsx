@@ -6,9 +6,9 @@ import update from "immutability-helper";
 import styles from "./TopicCollection.module.css";
 
 
-interface TopicCollectionProps {
+type TopicCollectionProps = {
   topicItems: TopicContents[];
-}
+};
 
 export const ItemTypes = {
   TOPIC: "topic",

@@ -7,41 +7,41 @@ import { ItemTypes } from "../TopicCollection/TopicCollection";
 import { EndEditingButtons } from "../../molecules/EndItemEditingControls/EndEditingButtons";
 import { EditorDropdownMenu } from "../../molecules/DropdownMenu/DropdownMenu";
 
-interface QaDisplayItem extends QaContents {
+type QaDisplayItem = QaContents & {
   topicIndex: number;
   index: number;
   moveQaItem: (dragTopicIndex: number, dragQaIndex: number, 
     hoverTopicIndex: number, hoverQaIndex: number) => void;
   onClickDelete: (itemId: string) => void;
   onUpdate:(contents: QaContents) => void;
-}
+};
 
-export interface QaContents {
+export type QaContents = {
   title: string;
   contents: string;
   itemId: string;
-}
+};
 
-interface StaticItemProps extends QaContents {
+type StaticItemProps = QaContents & {
   onClickEdit: () => void;
   onClickDelete: () => void;
   topicIndex: number;
   index: number;
   moveQaItem: (dragTopicIndex: number, dragQaIndex: number, 
     hoverTopicIndex: number, hoverQaIndex: number) => void;
-}
+};
 
 
-interface EditingProps extends QaContents{
+type EditingProps = QaContents & {
   onClickCancel: () => void;
   onClickDone: (qaContents: QaContents) => void;
-}
+};
 
-interface DragItem {
+type DragItem = {
   topicIndex: number;
   index: number;
   itemId: string; 
-}
+};
 
 const StaticItem = ({ title, contents, itemId, topicIndex, index, onClickDelete, onClickEdit, moveQaItem }: StaticItemProps) => {
  

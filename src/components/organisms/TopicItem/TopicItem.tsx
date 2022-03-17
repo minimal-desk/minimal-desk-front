@@ -11,37 +11,36 @@ import { EditorDropdownMenu } from "../../molecules/DropdownMenu/DropdownMenu";
 import { EditorButton } from "../../atoms/EditorButton/EditorButton";
 import { useIntl } from "react-intl";
 
-export interface TopicContents {
+export type TopicContents = {
   topicTitle: string;
   topicId: string;
   items: QaContents[];
-}
+};
 
-interface TopicDisplayItemProps extends TopicContents {
+type TopicDisplayItemProps = TopicContents & {
   index: number;
   moveTopic: (dragIndex: number, hoverIndex: number) => void;
   moveQa: (dragTopicIndex: number, dragQaIndex: number, 
     hoverTopicIndex: number, hoverQaIndex: number) => void;
   onClickDelete: (topicId: String) => void;
   onUpdate: (topicItem: TopicContents) => void;
-}
+};
 
-
-interface StaticTopicHeaderProps extends TopicContents {
+type StaticTopicHeaderProps = TopicContents & {
   index: number;
   moveTopic: (dragIndex: number, hoverIndex: number) => void;
   moveQa: (dragTopicIndex: number, dragQaIndex: number, 
     hoverTopicIndex: number, hoverQaIndex: number) => void;
   onClickEdit: () => void;
   onClickDelete: () => void;
-}
+};
 
-interface EditingTopicHeaderProps extends TopicContents {
+type EditingTopicHeaderProps = TopicContents & {
   onClickCancel: () => void;
   onClickDone: (topicItem: TopicContents) => void;
-}
+};
 
-interface DragItem {
+type DragItem = {
   index: number;
   itemId: string;
 }
