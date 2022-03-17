@@ -32,7 +32,6 @@ export const TopicCollection = ({
     );
   }, []);
 
-
   const moveQaItem = useCallback((
     dragTopicIndex: number, dragQaIndex: number, 
     hoverTopicIndex: number, hoverQaIndex: number) => {
@@ -41,6 +40,21 @@ export const TopicCollection = ({
       const qaItem = [...prevItems][dragTopicIndex].items[dragQaIndex];
       copied[dragTopicIndex].items.splice(dragQaIndex, 1);
       copied[hoverTopicIndex].items.splice(hoverQaIndex, 0, qaItem);
+      return copied;
+    });
+  }, []);
+
+  const deleteTopic = useCallback((topicIndex: number) => {
+    setItems((prevItems: TopicContents[]) =>
+      update(prevItems, { $splice: [[topicIndex, 1]] })
+    );
+  },[])
+
+  const deleteQaItem = useCallback((topicIndex: number, itemIndex: number) => {
+    setItems((prevItems: TopicContents[]) => {
+      const copied = [...prevItems];
+      const qaItem = [...prevItems][topicIndex].items[itemIndex];
+      copied[topicIndex].items.splice(itemIndex, 1);
       return copied;
     });
   }, []);
@@ -55,7 +69,8 @@ export const TopicCollection = ({
                 topicTitle={topicItem.topicTitle} 
                 topicId={topicItem.topicId}
                 items={topicItem.items}
-                onClickDelete={()=>{}}
+                requestDeleteTopic={deleteTopic}
+                requestDeleteQaItem={deleteQaItem}
                 onUpdate={()=>{}}
                 index={index}
                 moveTopic={moveTopicItem}

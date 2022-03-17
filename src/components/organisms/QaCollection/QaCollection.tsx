@@ -6,12 +6,14 @@ type QaCollectionProps = {
   items: QaContents[];
   moveQa: (dragTopicIndex: number, dragQaIndex: number, 
     hoverTopicIndex: number, hoverQaIndex: number) => void;
+    requestDeleteQaItem: (topicIndex: number, index: number) => void;
 }
 
 export const QaCollection = ({
   items,
   topicIndex,
   moveQa,
+  requestDeleteQaItem,
   ...props
 }: QaCollectionProps) => {
   return (
@@ -23,7 +25,7 @@ export const QaCollection = ({
               title={item.title} 
               contents={item.contents} 
               itemId={item.itemId} 
-              onClickDelete={(i) => {}}
+              requestDeleteQaItem={requestDeleteQaItem}
               onUpdate={(c)=>{}}
               topicIndex={topicIndex}
               index={index}

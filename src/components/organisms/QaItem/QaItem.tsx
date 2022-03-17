@@ -12,7 +12,7 @@ type QaDisplayItem = QaContents & {
   index: number;
   moveQaItem: (dragTopicIndex: number, dragQaIndex: number, 
     hoverTopicIndex: number, hoverQaIndex: number) => void;
-  onClickDelete: (itemId: string) => void;
+  requestDeleteQaItem: (topicIndex: number, index: number) => void;
   onUpdate:(contents: QaContents) => void;
 };
 
@@ -30,7 +30,6 @@ type StaticItemProps = QaContents & {
   moveQaItem: (dragTopicIndex: number, dragQaIndex: number, 
     hoverTopicIndex: number, hoverQaIndex: number) => void;
 };
-
 
 type EditingProps = QaContents & {
   onClickCancel: () => void;
@@ -157,7 +156,7 @@ export const QaItem = ({
   title,
   contents,
   itemId,
-  onClickDelete,
+  requestDeleteQaItem,
   onUpdate,
   topicIndex,
   index,
@@ -180,7 +179,7 @@ export const QaItem = ({
     return (
       <StaticItem 
         title={title} contents={contents} itemId={itemId}  
-        onClickEdit={() => {setIsEditing(true)}} onClickDelete={() => {onClickDelete(itemId)}}
+        onClickEdit={() => {setIsEditing(true)}} onClickDelete={() => {requestDeleteQaItem(topicIndex, index)}}
         topicIndex={topicIndex} index={index}
         moveQaItem={moveQaItem}
       />

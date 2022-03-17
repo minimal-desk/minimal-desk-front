@@ -17,20 +17,20 @@ export type TopicContents = {
   items: QaContents[];
 };
 
-type TopicDisplayItemProps = TopicContents & {
+type TopicItemDragProps = {
   index: number;
   moveTopic: (dragIndex: number, hoverIndex: number) => void;
   moveQa: (dragTopicIndex: number, dragQaIndex: number, 
     hoverTopicIndex: number, hoverQaIndex: number) => void;
-  onClickDelete: (topicId: String) => void;
+};
+
+type TopicDisplayItemProps = TopicContents & TopicItemDragProps & {
+  requestDeleteTopic: (index: number) => void;
+  requestDeleteQaItem: (topicIndex: number, index: number) => void;
   onUpdate: (topicItem: TopicContents) => void;
 };
 
-type StaticTopicHeaderProps = TopicContents & {
-  index: number;
-  moveTopic: (dragIndex: number, hoverIndex: number) => void;
-  moveQa: (dragTopicIndex: number, dragQaIndex: number, 
-    hoverTopicIndex: number, hoverQaIndex: number) => void;
+type StaticTopicHeaderProps = TopicContents & TopicItemDragProps & {
   onClickEdit: () => void;
   onClickDelete: () => void;
 };
@@ -52,7 +52,8 @@ export const TopicItem = ({
   index,
   moveTopic,
   moveQa,
-  onClickDelete,
+  requestDeleteTopic,
+  requestDeleteQaItem,
   onUpdate
 }: TopicDisplayItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -134,13 +135,13 @@ export const TopicItem = ({
           : <StaticTopicHeader 
               topicTitle={topicTitle} topicId={topicId} items={items}
               onClickEdit={()=>{setIsEditing(true)}}
-              onClickDelete={()=>{onClickDelete(topicId)}}
+              onClickDelete={()=>{requestDeleteTopic(index)}}
               index={index}
               moveTopic={moveTopic}
               moveQa={moveQa}
             />
         }
-        <QaCollection items={items} moveQa={moveQa} topicIndex={index} />
+        <QaCollection items={items} moveQa={moveQa} topicIndex={index} requestDeleteQaItem={requestDeleteQaItem} />
       </div>
     </div>
   );
