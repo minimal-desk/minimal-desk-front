@@ -90,6 +90,7 @@ export const TopicCollection = ({
 
   const prepareTopic = useCallback<PrepareTopicCallback>((insertIndex) => {
     const newItem: TopicContents = { topicTitle: "", topicId: uuidv4(), items: [] };
+    console.log(newItem.topicId);
     setPreparingTopicIds((prevIds) => 
       update(prevIds, {$push: [newItem.topicId]})
     );
@@ -100,6 +101,7 @@ export const TopicCollection = ({
 
   const prepareQaItem = useCallback<PrepareQaItemCallback>((topicIndex, insertItemIndex) => {
     const newItem: QaContents = { itemId: uuidv4(), title: "", contents: "" };
+    console.log(newItem.itemId);
     setPreparingQaItemIds((prevIds) =>
       update(prevIds, {$push: [newItem.itemId]})
     );

@@ -75,7 +75,7 @@ export const TopicItem = ({
   isNewTopic,
 }: TopicDisplayItemProps) => {
   const [isEditing, setIsEditing] = useState(isNewTopic);
-  const [editingCount, setEditingCount] = useState(0)
+  const [editingCount, setEditingCount] = useState(0);
 
   const notifyEditingState = useCallback<NotifyEditingState>((isEditingStart) => {
     setEditingCount((prevCount) => {
@@ -217,7 +217,15 @@ export const TopicItem = ({
   );
 }
 
-const StaticTopicHeader = ({ index, topicTitle, topicId, onClickEdit, onClickDelete, requestPrepareQaItem, notifyEditingState }: StaticTopicHeaderProps) => {
+const StaticTopicHeader = React.memo(({ 
+    index, 
+    topicTitle, 
+    topicId, 
+    onClickEdit, 
+    onClickDelete, 
+    requestPrepareQaItem, 
+    notifyEditingState 
+  }: StaticTopicHeaderProps) => {
   const { formatMessage } = useIntl();
 
   return (
@@ -245,9 +253,9 @@ const StaticTopicHeader = ({ index, topicTitle, topicId, onClickEdit, onClickDel
       </div>
     </div>
   );
-}
+});
 
-const EditingTopicHeader = (props: EditingTopicHeaderProps) => {
+const EditingTopicHeader = React.memo((props: EditingTopicHeaderProps) => {
   const [title, setTitle] = useState(props.topicTitle);
   return (
     <div className="d-flex justify-content-between">
@@ -260,4 +268,4 @@ const EditingTopicHeader = (props: EditingTopicHeaderProps) => {
       />
     </div>
   );
-}
+});

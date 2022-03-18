@@ -29,7 +29,7 @@ export type QaContents = {
   itemId: string;
 };
 
-type StaticItemProps = QaContents & QaItemDragProps & {
+type StaticItemProps = QaContents & {
   onClickEdit: () => void;
   onClickDelete: () => void;
 };
@@ -46,7 +46,7 @@ export type DragQaItem = {
   itemId: string; 
 };
 
-const StaticItem = ({ title, contents, itemId, onClickDelete, onClickEdit }: StaticItemProps) => {
+const StaticItem = React.memo(({ title, contents, itemId, onClickDelete, onClickEdit }: StaticItemProps) => {
   return (
     <div className="card">
       <div className="card-body">
@@ -62,9 +62,9 @@ const StaticItem = ({ title, contents, itemId, onClickDelete, onClickEdit }: Sta
       </div>
     </div>
   )
-};
+});
 
-const EditingItem = (props: EditingProps) => {
+const EditingItem = React.memo((props: EditingProps) => {
   const [title, setTitle] = useState(props.title);
   const [contents, setContents] = useState(props.contents);
 
@@ -96,9 +96,9 @@ const EditingItem = (props: EditingProps) => {
       </div>
     </div>
   );
-}
+});
 
-export const QaItem = ({
+export const QaItem = React.memo(({
   title,
   contents,
   itemId,
@@ -216,10 +216,8 @@ export const QaItem = ({
             setIsEditing(true);
             notifyEditingState(true);
           }} onClickDelete={() => {requestDeleteQaItem(topicIndex, index)}}
-          topicIndex={topicIndex} index={index}
-          moveQaItem={moveQaItem}
         />
       }
     </div>
   );
-}
+});
