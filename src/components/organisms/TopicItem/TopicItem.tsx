@@ -1,47 +1,56 @@
-import { FormattedMessage } from "react-intl";
 import { QaCollection } from "../QaCollection/QaCollection";
-import { QaContents } from "../QaItem/QaItem";
-import styles from "./TopicItem.module.css";
-import React, { useRef, useState } from "react";
+import { DragQaItem, QaContents } from "../QaItem/QaItem";
+import React, { useRef, useState, useCallback } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import { ItemTypes } from "../TopicCollection/TopicCollection";
+import { PrepareQaItemCallback, DeleteQaItemCallback, DeleteTopicCallback, ItemTypes, MoveQaItemCallback, MoveTopicCallback, UpdateQaItemCallback, UpdateTopicTitleCallback, AbortQaItemCallback, FixQaItemCallback, AbortTopicCallback, FixTopicCallback } from "../TopicCollection/TopicCollection";
 import type { XYCoord, Identifier } from 'dnd-core'
 import { EndEditingButtons } from "../../molecules/EndItemEditingControls/EndEditingButtons";
 import { EditorDropdownMenu } from "../../molecules/DropdownMenu/DropdownMenu";
 import { EditorButton } from "../../atoms/EditorButton/EditorButton";
 import { useIntl } from "react-intl";
 
-export interface TopicContents {
+export type TopicContents = {
   topicTitle: string;
   topicId: string;
   items: QaContents[];
-}
+};
 
-interface TopicDisplayItemProps extends TopicContents {
+export type NotifyEditingState = (isEditingStart: boolean) => void;
+
+type TopicItemDragProps = {
   index: number;
-  moveTopic: (dragIndex: number, hoverIndex: number) => void;
-  moveQa: (dragTopicIndex: number, dragQaIndex: number, 
-    hoverTopicIndex: number, hoverQaIndex: number) => void;
-  onClickDelete: (topicId: String) => void;
-  onUpdate: (topicItem: TopicContents) => void;
-}
+  moveTopic: MoveTopicCallback;
+  moveQa: MoveQaItemCallback;
+};
 
+type TopicDisplayItemProps = TopicContents & TopicItemDragProps & {
+  requestDeleteTopic: DeleteTopicCallback;
+  requestDeleteQaItem: DeleteQaItemCallback;
+  requestUpdateTopicTitle: UpdateTopicTitleCallback;
+  requestUpdateQaItem: UpdateQaItemCallback;
+  requestPrepareQaItem: PrepareQaItemCallback;
+  requestAbortQaItem: AbortQaItemCallback;
+  requestFixQaItem: FixQaItemCallback;
+  requestAbortTopic: AbortTopicCallback;
+  requestFixTopic: FixTopicCallback;
+  preparingQaItemIds: string[];
+  isNewTopic?: boolean;
+};
 
-interface StaticTopicHeaderProps extends TopicContents {
-  index: number;
-  moveTopic: (dragIndex: number, hoverIndex: number) => void;
-  moveQa: (dragTopicIndex: number, dragQaIndex: number, 
-    hoverTopicIndex: number, hoverQaIndex: number) => void;
+type StaticTopicHeaderProps = TopicContents & TopicItemDragProps & {
   onClickEdit: () => void;
   onClickDelete: () => void;
-}
+  requestPrepareQaItem: PrepareQaItemCallback;
+  notifyEditingState: NotifyEditingState;
+};
 
-interface EditingTopicHeaderProps extends TopicContents {
+type EditingTopicHeaderProps = TopicContents & {
   onClickCancel: () => void;
-  onClickDone: (topicItem: TopicContents) => void;
-}
+  onClickDone: (topicTitle: string) => void;
+  isNewTopic?: boolean;
+};
 
-interface DragItem {
+type DragTopicItem = {
   index: number;
   itemId: string;
 }
@@ -53,12 +62,44 @@ export const TopicItem = ({
   index,
   moveTopic,
   moveQa,
-  onClickDelete,
-  onUpdate
+  requestDeleteTopic,
+  requestDeleteQaItem,
+  requestUpdateTopicTitle,
+  requestUpdateQaItem,
+  requestPrepareQaItem,
+  requestAbortQaItem,
+  requestFixQaItem,
+  requestAbortTopic,
+  requestFixTopic,
+  preparingQaItemIds,
+  isNewTopic,
 }: TopicDisplayItemProps) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(isNewTopic);
+  const [editingCount, setEditingCount] = useState(0);
 
-  const ref = useRef<HTMLDivElement>(null)
+  const notifyEditingState = useCallback<NotifyEditingState>((isEditingStart) => {
+    setEditingCount((prevCount) => {
+      return prevCount + (isEditingStart ? 1 : -1);
+    })
+  }, []);
+
+  const onClickCancel = useCallback(() => {
+    if (isNewTopic) {
+      requestAbortTopic(topicId, index)
+    } else {
+      setIsEditing(false);
+    }
+  }, [topicId, index, isNewTopic]);
+
+  const onClickDone = useCallback((topicTitle: string) => {
+    if (isNewTopic) {
+      requestFixTopic(topicId);
+    }
+    requestUpdateTopicTitle(index, topicTitle);
+    setIsEditing(false);
+  }, [topicId, index, isNewTopic]);
+
+  const ref = useRef<HTMLDivElement>(null);
 
   const [ { isDragging }, drag] = useDrag({
     type: ItemTypes.TOPIC,
@@ -69,53 +110,73 @@ export const TopicItem = ({
       isDragging: monitor.isDragging(),
     }),
     canDrag(_){
-      return !isEditing
+      return !isEditing && editingCount == 0;
     }
-  })
+  });
+
 
   const [{ handlerId }, drop] = useDrop<
-    DragItem, 
+    DragTopicItem | DragQaItem, 
     void, 
     { handlerId: Identifier | null }
   >({
-    accept: ItemTypes.TOPIC,
+    accept: [ItemTypes.TOPIC, ItemTypes.QA],
     collect(monitor) {
       return { handlerId: monitor.getHandlerId() }
     },
-    hover(item: DragItem, monitor) {
-      if (!ref.current) {
-        return;
+    hover(anyItem: any, monitor) {
+
+      if (typeof anyItem.topicIndex === "number") {
+        const item = anyItem as DragQaItem;
+
+        if (items.length > 0) {
+          return;
+        }
+
+        if (!ref.current) {
+          return;
+        }
+
+        moveQa(item.topicIndex, item.index, index, 0);
+        item.topicIndex = index;
+        item.index = 0;
+
+      } else {
+        const item = anyItem as DragTopicItem
+
+        if (!ref.current) {
+          return;
+        }
+        const dragIndex = item.index;
+        const hoverIndex = index;
+  
+        if (dragIndex === hoverIndex) {
+          return;
+        }
+  
+        const hoverBoundingRect = ref.current?.getBoundingClientRect();
+        const hoverMiddleY = 
+          (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+        
+        const clientOffset = monitor.getClientOffset();
+  
+        const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
+  
+        if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+          return;
+        }
+  
+        if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+          return;
+        }
+  
+        moveTopic(dragIndex, hoverIndex);
+        item.index = hoverIndex;
       }
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      const hoverBoundingRect = ref.current?.getBoundingClientRect();
-      const hoverMiddleY = 
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-      
-      const clientOffset = monitor.getClientOffset();
-
-      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
-
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return;
-      }
-
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return;
-      }
-
-      moveTopic(dragIndex, hoverIndex);
-
-      item.index = hoverIndex;
     },
-  })
+  });
 
-  const opacity = isDragging ? 0.5 : 1
+  const opacity = isDragging ? 0.5 : 1;
   drag(drop(ref));
 
   return(
@@ -125,29 +186,46 @@ export const TopicItem = ({
           isEditing
           ? <EditingTopicHeader 
               topicTitle={topicTitle} topicId={topicId} items={items} 
-              onClickCancel={()=>{setIsEditing(false)}}
-              onClickDone={
-                (topicItem)=>{
-                  setIsEditing(false);
-                  onUpdate(topicItem);
-                }}
+              onClickCancel={onClickCancel}
+              onClickDone={onClickDone}
+              isNewTopic={isNewTopic}
             />
           : <StaticTopicHeader 
               topicTitle={topicTitle} topicId={topicId} items={items}
               onClickEdit={()=>{setIsEditing(true)}}
-              onClickDelete={()=>{onClickDelete(topicId)}}
+              onClickDelete={()=>{requestDeleteTopic(index)}}
               index={index}
               moveTopic={moveTopic}
               moveQa={moveQa}
+              requestPrepareQaItem={requestPrepareQaItem}
+              notifyEditingState={notifyEditingState}
             />
         }
-        <QaCollection items={items} moveQa={moveQa} topicIndex={index} />
+        <QaCollection 
+          items={items} 
+          moveQa={moveQa} 
+          topicIndex={index} 
+          requestDeleteQaItem={requestDeleteQaItem} 
+          requestUpdateQaItem={requestUpdateQaItem}
+          requestAbortQaItem={requestAbortQaItem}
+          requestFixQaItem={requestFixQaItem}
+          preparingQaItemIds={preparingQaItemIds}
+          notifyEditingState={notifyEditingState} 
+        />
       </div>
     </div>
   );
 }
 
-const StaticTopicHeader = ({ topicTitle, topicId, onClickEdit, onClickDelete }: StaticTopicHeaderProps) => {
+const StaticTopicHeader = React.memo(({ 
+    index, 
+    topicTitle, 
+    topicId, 
+    onClickEdit, 
+    onClickDelete, 
+    requestPrepareQaItem, 
+    notifyEditingState 
+  }: StaticTopicHeaderProps) => {
   const { formatMessage } = useIntl();
 
   return (
@@ -157,7 +235,10 @@ const StaticTopicHeader = ({ topicTitle, topicId, onClickEdit, onClickDelete }: 
       <div className="fw-bold lead">{topicTitle}</div>
       <div>
         <EditorButton
-          onClick={()=>{}}
+          onClick={()=>{
+            requestPrepareQaItem(index, 0);
+            notifyEditingState(true);
+          }}
         >
           <i className="bi bi-plus"></i>
         </EditorButton>
@@ -172,18 +253,19 @@ const StaticTopicHeader = ({ topicTitle, topicId, onClickEdit, onClickDelete }: 
       </div>
     </div>
   );
-}
+});
 
-const EditingTopicHeader = (props: EditingTopicHeaderProps) => {
+const EditingTopicHeader = React.memo((props: EditingTopicHeaderProps) => {
   const [title, setTitle] = useState(props.topicTitle);
   return (
     <div className="d-flex justify-content-between">
       <input className="form-control" type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
       
       <EndEditingButtons
-        onClickDone={() => {props.onClickDone(props)}}
+        onClickDone={() => {props.onClickDone(title)}}
         onClickCancel={props.onClickCancel} 
+        isNewItem={props.isNewTopic}
       />
     </div>
   );
-}
+});

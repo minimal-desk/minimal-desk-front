@@ -2,15 +2,15 @@ import { FormattedMessage } from "react-intl";
 import Link from "next/link";
 import styles from "./ConsoleFooter.module.css";
 
-interface ConsoleFooterProps {
+type ConsoleFooterProps = {
 
-}
+};
 
-interface ItemProps {
+type ItemProps = {
   href: string,
   key: string,
   isFirst?: boolean
-}
+};
 
 const FooterItem: React.FC<ItemProps> = ({ children, href, key, isFirst }) => (
   <li key={key}>

@@ -1,18 +1,30 @@
 import { QaContents, QaItem } from "../QaItem/QaItem";
+import { AbortQaItemCallback, DeleteQaItemCallback, FixQaItemCallback, MoveQaItemCallback, UpdateQaItemCallback } from "../TopicCollection/TopicCollection";
+import { NotifyEditingState } from "../TopicItem/TopicItem";
 import styles from "./QaCollection.module.css";
 
-interface QaCollectionProps {
+type QaCollectionProps = {
   topicIndex: number;
   items: QaContents[];
-  moveQa: (dragTopicIndex: number, dragQaIndex: number, 
-    hoverTopicIndex: number, hoverQaIndex: number) => void;
+  moveQa: MoveQaItemCallback;
+  requestDeleteQaItem: DeleteQaItemCallback;
+  requestUpdateQaItem: UpdateQaItemCallback;
+  requestAbortQaItem: AbortQaItemCallback;
+  requestFixQaItem: FixQaItemCallback;
+  preparingQaItemIds: string[]; 
+  notifyEditingState: NotifyEditingState;
 }
 
 export const QaCollection = ({
   items,
   topicIndex,
   moveQa,
-  ...props
+  requestDeleteQaItem,
+  requestUpdateQaItem,
+  requestAbortQaItem,
+  requestFixQaItem,
+  preparingQaItemIds,
+  notifyEditingState
 }: QaCollectionProps) => {
   return (
     <div>
@@ -23,11 +35,15 @@ export const QaCollection = ({
               title={item.title} 
               contents={item.contents} 
               itemId={item.itemId} 
-              onClickDelete={(i) => {}}
-              onUpdate={(c)=>{}}
+              requestDeleteQaItem={requestDeleteQaItem}
+              requestUpdateItem={requestUpdateQaItem}
+              requestAbortQaItem={requestAbortQaItem}
+              requestFixQaItem={requestFixQaItem}
               topicIndex={topicIndex}
               index={index}
               moveQaItem={moveQa}
+              isNewItem={preparingQaItemIds.includes(item.itemId)}
+              notifyEditingState={notifyEditingState}
             />
           </li>
         )}

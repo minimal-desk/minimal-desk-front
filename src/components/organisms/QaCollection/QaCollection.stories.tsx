@@ -12,8 +12,15 @@ export default {
 const Template: Story = (args) =>(
   <DndProvider backend={HTML5Backend}>
     <QaCollection
+      topicIndex={0}
       items={args.items}
       moveQa={(_)=>{}}
+      requestDeleteQaItem={()=>{}}
+      requestUpdateQaItem={()=>{}}
+      requestAbortQaItem={()=>{}}
+      requestFixQaItem={()=>{}}
+      preparingQaItemIds={[]}
+      notifyEditingState={()=>{}}
     />
   </DndProvider>
 );

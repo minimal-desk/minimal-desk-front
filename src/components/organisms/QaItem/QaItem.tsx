@@ -1,50 +1,138 @@
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import styles from "./QaItem.module.css";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import type { XYCoord, Identifier } from "dnd-core";
-import { ItemTypes } from "../TopicCollection/TopicCollection";
+import { AbortQaItemCallback, DeleteQaItemCallback, FixQaItemCallback, ItemTypes, MoveQaItemCallback, UpdateQaItemCallback } from "../TopicCollection/TopicCollection";
 import { EndEditingButtons } from "../../molecules/EndItemEditingControls/EndEditingButtons";
 import { EditorDropdownMenu } from "../../molecules/DropdownMenu/DropdownMenu";
+import { NotifyEditingState } from "../TopicItem/TopicItem";
 
-interface QaDisplayItem extends QaContents {
+type QaDisplayItem = QaContents & QaItemDragProps & {
+  requestDeleteQaItem: DeleteQaItemCallback;
+  requestUpdateItem: UpdateQaItemCallback;
+  requestAbortQaItem: AbortQaItemCallback;
+  requestFixQaItem: FixQaItemCallback;
+  isNewItem?: boolean;
+  notifyEditingState: NotifyEditingState;
+};
+
+type QaItemDragProps = {
   topicIndex: number;
   index: number;
-  moveQaItem: (dragTopicIndex: number, dragQaIndex: number, 
-    hoverTopicIndex: number, hoverQaIndex: number) => void;
-  onClickDelete: (itemId: string) => void;
-  onUpdate:(contents: QaContents) => void;
-}
+  moveQaItem: MoveQaItemCallback;
+};
 
-export interface QaContents {
+export type QaContents = {
   title: string;
   contents: string;
   itemId: string;
-}
+};
 
-interface StaticItemProps extends QaContents {
+type StaticItemProps = QaContents & {
   onClickEdit: () => void;
   onClickDelete: () => void;
-  topicIndex: number;
-  index: number;
-  moveQaItem: (dragTopicIndex: number, dragQaIndex: number, 
-    hoverTopicIndex: number, hoverQaIndex: number) => void;
-}
+};
 
-
-interface EditingProps extends QaContents{
+type EditingProps = QaContents & {
   onClickCancel: () => void;
   onClickDone: (qaContents: QaContents) => void;
-}
+  isNewItem?: boolean;
+};
 
-interface DragItem {
+export type DragQaItem = {
   topicIndex: number;
   index: number;
   itemId: string; 
-}
+};
 
-const StaticItem = ({ title, contents, itemId, topicIndex, index, onClickDelete, onClickEdit, moveQaItem }: StaticItemProps) => {
- 
+const StaticItem = React.memo(({ title, contents, itemId, onClickDelete, onClickEdit }: StaticItemProps) => {
+  return (
+    <div className="card">
+      <div className="card-body">
+        <div className={styles.titleRow}>
+          <p className="fw-bold text-body">{title}</p>
+          <EditorDropdownMenu 
+            menuId={"dropdown-" + itemId}
+            onClickEdit={onClickEdit}
+            onClickDelete={onClickDelete}
+          />
+        </div>
+        <p className={"text-secondary " + styles.contents}>{contents}</p>
+      </div>
+    </div>
+  )
+});
+
+const EditingItem = React.memo((props: EditingProps) => {
+  const [title, setTitle] = useState(props.title);
+  const [contents, setContents] = useState(props.contents);
+
+  const { formatMessage } = useIntl();
+  const doneButtonTitle = props.isNewItem 
+    ? formatMessage({id: "QaItem.Editing.Add", defaultMessage: "Add"})
+    : formatMessage({id: "QaItem.Editing.Done", defaultMessage: "Done"});
+  
+  return (
+    <div className="card">
+      <div className="card-body">
+        <form>
+          <div className="mb-4">
+            <label className="form-text mx-1 mb-1 text-secondary"><FormattedMessage id="QaItem.Editing.Title" defaultMessage="Title" /></label>
+            <input className="form-control" type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-text mx-1 mb-1 text-secondary"><FormattedMessage id="QaItem.Editing.Contents" defaultMessage="Contents" /></label>
+            <textarea className="form-control" rows={3} value={contents} onChange={(e) => setContents(e.target.value)} />
+          </div>
+
+          <EndEditingButtons 
+            onClickDone={() => props.onClickDone({title: title, contents: contents, itemId: props.itemId})}
+            onClickCancel={props.onClickCancel}
+            isNewItem={props.isNewItem}
+          />
+        </form>
+      </div>
+    </div>
+  );
+});
+
+export const QaItem = React.memo(({
+  title,
+  contents,
+  itemId,
+  requestDeleteQaItem,
+  requestUpdateItem,
+  requestAbortQaItem,
+  requestFixQaItem,
+  topicIndex,
+  index,
+  moveQaItem,
+  isNewItem,
+  notifyEditingState
+}: QaDisplayItem) => {
+  const [isEditing, setIsEditing] = useState(isNewItem);
+
+  const onClickCancel = useCallback(() => {
+    if (isNewItem) {
+      requestAbortQaItem(itemId, topicIndex, index);
+    } else {
+      setIsEditing(false);
+    }
+    notifyEditingState(false);
+  }, [itemId, topicIndex, index, isNewItem]);
+
+  const onClickDone = useCallback((newContents: QaContents) => {
+    if (isNewItem) {
+      requestFixQaItem(itemId);
+    }
+    requestUpdateItem(topicIndex, index, newContents);
+    setIsEditing(false);
+    notifyEditingState(false);
+  }, [itemId, topicIndex, index, isNewItem]);
+
+
   const ref = useRef<HTMLDivElement>(null);
 
   const [{isDragging} , drag] = useDrag({
@@ -55,10 +143,13 @@ const StaticItem = ({ title, contents, itemId, topicIndex, index, onClickDelete,
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
+    canDrag(_){
+      return !isEditing;
+    }
   });
 
   const [{ handlerId }, drop] = useDrop<
-    DragItem, 
+    DragQaItem, 
     void, 
     { handlerId: Identifier | null }
   >({
@@ -66,7 +157,7 @@ const StaticItem = ({ title, contents, itemId, topicIndex, index, onClickDelete,
     collect(monitor) {
       return { handlerId: monitor.getHandlerId() };
     },
-    hover(item: DragItem, monitor) {
+    hover(item: DragQaItem, monitor) {
       if (!ref.current) {
         return;
       }
@@ -109,81 +200,24 @@ const StaticItem = ({ title, contents, itemId, topicIndex, index, onClickDelete,
   const opacity = isDragging ? 0.5 : 1
   drag(drop(ref));
 
-  return (
-    <div className="card" ref={ref} data-handler-id={handlerId} style={{opacity}}>
-      <div className="card-body">
-        <div className={styles.titleRow}>
-          <p className="fw-bold text-body">{title}</p>
-          <EditorDropdownMenu 
-            menuId={"dropdown-" + itemId}
-            onClickEdit={onClickEdit}
-            onClickDelete={onClickDelete}
-          />
-        </div>
-        <p className={"text-secondary " + styles.contents}>{contents}</p>
-      </div>
-    </div>
-  )
-};
-
-const EditingItem = (props: EditingProps) => {
-  const [title, setTitle] = useState(props.title);
-  const [contents, setContents] = useState(props.contents);
-  return (
-    <div className="card">
-      <div className="card-body">
-        <form>
-          <div className="mb-4">
-            <label className="form-text mx-1 mb-1 text-secondary"><FormattedMessage id="QaItem.Editing.Title" defaultMessage="Title" /></label>
-            <input className="form-control" type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-          </div>
-
-          <div className="mb-3">
-            <label className="form-text mx-1 mb-1 text-secondary"><FormattedMessage id="QaItem.Editing.Contents" defaultMessage="Contents" /></label>
-            <textarea className="form-control" rows={3} value={contents} onChange={(e) => setContents(e.target.value)} />
-          </div>
-
-          <EndEditingButtons 
-            onClickDone={() => props.onClickDone(props)}
-            onClickCancel={props.onClickCancel}
-          />
-        </form>
-      </div>
+  return(
+    <div ref={ref} data-handler-id={handlerId} style={{opacity}}>
+      {
+        isEditing ?
+        <EditingItem 
+          title={title} contents={contents} itemId={itemId} 
+          onClickCancel={onClickCancel} 
+          onClickDone={onClickDone} 
+          isNewItem={isNewItem}
+        /> :
+        <StaticItem 
+          title={title} contents={contents} itemId={itemId}  
+          onClickEdit={() => {
+            setIsEditing(true);
+            notifyEditingState(true);
+          }} onClickDelete={() => {requestDeleteQaItem(topicIndex, index)}}
+        />
+      }
     </div>
   );
-}
-
-export const QaItem = ({
-  title,
-  contents,
-  itemId,
-  onClickDelete,
-  onUpdate,
-  topicIndex,
-  index,
-  moveQaItem
-}: QaDisplayItem) => {
-  const [isEditing, setIsEditing] = useState(false);
-
-  if (isEditing) {
-    return (
-      <EditingItem 
-        title={title} contents={contents} itemId={itemId} 
-        onClickCancel={() => {setIsEditing(false)}} 
-        onClickDone={(c) => {
-          onUpdate(c);
-          setIsEditing(false);
-        }} 
-      />
-    );
-  } else {
-    return (
-      <StaticItem 
-        title={title} contents={contents} itemId={itemId}  
-        onClickEdit={() => {setIsEditing(true)}} onClickDelete={() => {onClickDelete(itemId)}}
-        topicIndex={topicIndex} index={index}
-        moveQaItem={moveQaItem}
-      />
-    );
-  }
-}
+});

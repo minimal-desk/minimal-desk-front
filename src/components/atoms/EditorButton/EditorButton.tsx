@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "./EditorButton.module.css";
 
-type Props = {
-} & JSX.IntrinsicElements["button"];
+type Props = JSX.IntrinsicElements["button"] & {
+};
 
 export const EditorButton: React.FC<Props> = React.memo(
   ({ children, ...props }) => {

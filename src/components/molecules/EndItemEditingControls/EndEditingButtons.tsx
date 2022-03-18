@@ -1,14 +1,14 @@
 import React from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 
 type Props = {
   onClickDone: () => void;
   onClickCancel: () => void;
-  doneButtonTitle?: string;
+  isNewItem?: boolean
 };
 
 export const EndEditingButtons: React.VFC<Props> = React.memo(
-  ({ onClickDone, onClickCancel, doneButtonTitle}:Props) => {
+  ({ onClickDone, onClickCancel, isNewItem}:Props) => {
     return (
       <div className="d-flex justify-content-end ms-4">
         <button type="button" className="btn btn-secondary" onClick={onClickCancel}>
@@ -21,8 +21,8 @@ export const EndEditingButtons: React.VFC<Props> = React.memo(
           onClick={onClickDone}
         >
           {
-            doneButtonTitle != undefined
-            ? doneButtonTitle
+            isNewItem
+            ? <FormattedMessage id="EndEditingButtons.Add" defaultMessage="Add" />
             : <FormattedMessage id="EndEditingButtons.Done" defaultMessage="Done" />
           }
         </button>

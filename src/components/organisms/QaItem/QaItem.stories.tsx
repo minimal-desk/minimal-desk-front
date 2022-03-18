@@ -14,11 +14,14 @@ const Template: Story = (args) => (
       title={args.title} 
       contents={args.contents} 
       itemId={args.itemId} 
-      onClickDelete={(_)=>{}}
-      onUpdate={(_)=>{}}
+      requestDeleteQaItem={()=>{}}
+      requestUpdateItem={()=>{}}
+      requestAbortQaItem={()=>{}}
+      requestFixQaItem={()=>{}}
       topicIndex={0}
       index={0}
       moveQaItem={(_)=>{}}
+      notifyEditingState={()=>{}}
       {...args} />
   </DndProvider>
 );
