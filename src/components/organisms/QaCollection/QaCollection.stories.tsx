@@ -17,6 +17,10 @@ const Template: Story = (args) =>(
       moveQa={(_)=>{}}
       requestDeleteQaItem={()=>{}}
       requestUpdateQaItem={()=>{}}
+      requestAbortQaItem={()=>{}}
+      requestFixQaItem={()=>{}}
+      preparingQaItemIds={[]}
+      notifyEditingState={()=>{}}
     />
   </DndProvider>
 );

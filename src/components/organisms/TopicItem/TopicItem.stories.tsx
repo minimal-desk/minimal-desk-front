@@ -22,6 +22,12 @@ const Template: Story = (args) => (
       requestDeleteTopic={()=>{}}
       requestUpdateTopicTitle={()=>{}}
       requestUpdateQaItem={()=>{}}
+      requestAbortTopic={()=>{}}
+      requestFixTopic={()=>{}}
+      requestPrepareQaItem={()=>{}}
+      requestAbortQaItem={()=>{}}
+      requestFixQaItem={()=>{}}
+      preparingQaItemIds={[]}
     />
   </DndProvider>
 );

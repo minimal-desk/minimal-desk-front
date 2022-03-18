@@ -1,5 +1,6 @@
 import { QaContents, QaItem } from "../QaItem/QaItem";
-import { DeleteQaItemCallback, MoveQaItemCallback, UpdateQaItemCallback } from "../TopicCollection/TopicCollection";
+import { AbortQaItemCallback, DeleteQaItemCallback, FixQaItemCallback, MoveQaItemCallback, UpdateQaItemCallback } from "../TopicCollection/TopicCollection";
+import { NotifyEditingState } from "../TopicItem/TopicItem";
 import styles from "./QaCollection.module.css";
 
 type QaCollectionProps = {
@@ -7,7 +8,11 @@ type QaCollectionProps = {
   items: QaContents[];
   moveQa: MoveQaItemCallback;
   requestDeleteQaItem: DeleteQaItemCallback;
-  requestUpdateQaItem: UpdateQaItemCallback
+  requestUpdateQaItem: UpdateQaItemCallback;
+  requestAbortQaItem: AbortQaItemCallback;
+  requestFixQaItem: FixQaItemCallback;
+  preparingQaItemIds: string[]; 
+  notifyEditingState: NotifyEditingState;
 }
 
 export const QaCollection = ({
@@ -16,6 +21,10 @@ export const QaCollection = ({
   moveQa,
   requestDeleteQaItem,
   requestUpdateQaItem,
+  requestAbortQaItem,
+  requestFixQaItem,
+  preparingQaItemIds,
+  notifyEditingState
 }: QaCollectionProps) => {
   return (
     <div>
@@ -28,9 +37,13 @@ export const QaCollection = ({
               itemId={item.itemId} 
               requestDeleteQaItem={requestDeleteQaItem}
               requestUpdateItem={requestUpdateQaItem}
+              requestAbortQaItem={requestAbortQaItem}
+              requestFixQaItem={requestFixQaItem}
               topicIndex={topicIndex}
               index={index}
               moveQaItem={moveQa}
+              isNewItem={preparingQaItemIds.includes(item.itemId)}
+              notifyEditingState={notifyEditingState}
             />
           </li>
         )}
