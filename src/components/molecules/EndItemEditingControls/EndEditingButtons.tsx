@@ -8,7 +8,7 @@ type Props = {
 };
 
 export const EndEditingButtons: React.VFC<Props> = React.memo(
-  ({ onClickDone, onClickCancel, isNewItem}:Props) => {
+  function EndEditingButtons({ onClickDone, onClickCancel, isNewItem}:Props) {
     return (
       <div className="d-flex justify-content-end ms-4">
         <button type="button" className="btn btn-secondary" onClick={onClickCancel}>
@@ -30,4 +30,3 @@ export const EndEditingButtons: React.VFC<Props> = React.memo(
   );
   }
 );
-

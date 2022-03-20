@@ -110,16 +110,6 @@ export const TopicCollection = ({
     );
   }, []);
 
-  const abortTopic = useCallback<AbortTopicCallback>((topicId, topicIndex) => {
-    deleteTopic(topicIndex);
-    fixTopic(topicId);
-  }, []);
-
-  const abortQaItem = useCallback<AbortQaItemCallback>((itemId, topicIndex, itemIndex) => {
-    deleteQaItem(topicIndex, itemIndex);
-    fixQaItem(itemId);
-  }, []);
-
   const fixTopic = useCallback<FixTopicCallback>((topicId) => {
     setPreparingTopicIds((prevIds) => 
       update(prevIds, { $splice: [[prevIds.indexOf(topicId), 1]] })
@@ -131,6 +121,16 @@ export const TopicCollection = ({
       update(prevIds, { $splice: [[prevIds.indexOf(itemId), 1]] })
     );
   }, []);
+
+  const abortTopic = useCallback<AbortTopicCallback>((topicId, topicIndex) => {
+    deleteTopic(topicIndex);
+    fixTopic(topicId);
+  }, [deleteTopic, fixTopic]);
+
+  const abortQaItem = useCallback<AbortQaItemCallback>((itemId, topicIndex, itemIndex) => {
+    deleteQaItem(topicIndex, itemIndex);
+    fixQaItem(itemId);
+  }, [deleteQaItem, fixQaItem]);
 
   return(
     <DndProvider backend={HTML5Backend}>

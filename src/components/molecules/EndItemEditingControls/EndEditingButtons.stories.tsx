@@ -17,8 +17,8 @@ const CustomTitle: Story = (args) => (
   <EndEditingButtons
     onClickDone={()=>{}}
     onClickCancel={()=>{}}
-    doneButtonTitle={args.title}
-  />
+    isNewItem={true}
+  /> 
 );
 
 
