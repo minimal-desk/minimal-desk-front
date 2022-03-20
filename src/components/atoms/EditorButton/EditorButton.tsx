@@ -5,7 +5,7 @@ type Props = JSX.IntrinsicElements["button"] & {
 };
 
 export const EditorButton: React.FC<Props> = React.memo(
-  ({ children, ...props }) => {
+  function EditorButton({ children, ...props }){
     return (
       <button
         className={"btn " + styles.menuButton}
@@ -14,6 +14,6 @@ export const EditorButton: React.FC<Props> = React.memo(
       >
         { children }
       </button>
-    )
+    );
   }
-)
+);

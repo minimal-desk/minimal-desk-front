@@ -89,7 +89,7 @@ export const TopicItem = ({
     } else {
       setIsEditing(false);
     }
-  }, [topicId, index, isNewTopic]);
+  }, [topicId, index, isNewTopic, requestAbortTopic]);
 
   const onClickDone = useCallback((topicTitle: string) => {
     if (isNewTopic) {
@@ -97,7 +97,7 @@ export const TopicItem = ({
     }
     requestUpdateTopicTitle(index, topicTitle);
     setIsEditing(false);
-  }, [topicId, index, isNewTopic]);
+  }, [topicId, index, isNewTopic, requestFixTopic, requestUpdateTopicTitle]);
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -217,7 +217,7 @@ export const TopicItem = ({
   );
 }
 
-const StaticTopicHeader = React.memo(({ 
+const StaticTopicHeader = React.memo( function StaticTopicHeader({ 
     index, 
     topicTitle, 
     topicId, 
@@ -225,7 +225,7 @@ const StaticTopicHeader = React.memo(({
     onClickDelete, 
     requestPrepareQaItem, 
     notifyEditingState 
-  }: StaticTopicHeaderProps) => {
+  }: StaticTopicHeaderProps) {
   const { formatMessage } = useIntl();
 
   return (
@@ -255,7 +255,7 @@ const StaticTopicHeader = React.memo(({
   );
 });
 
-const EditingTopicHeader = React.memo((props: EditingTopicHeaderProps) => {
+const EditingTopicHeader = React.memo(function EditingTopicHeader (props: EditingTopicHeaderProps) {
   const [title, setTitle] = useState(props.topicTitle);
   return (
     <div className="d-flex justify-content-between">

@@ -11,7 +11,7 @@ type Props = {
 };
 
 export const EditorDropdownMenu: React.VFC<Props> = React.memo(
-  ({ menuId, onClickEdit, onClickDelete,  editButtonTitle, deleteButtonTitle}: Props) => {
+  function EditorDropdownMenu({ menuId, onClickEdit, onClickDelete,  editButtonTitle, deleteButtonTitle}: Props){
     return (
       <>
         <EditorButton

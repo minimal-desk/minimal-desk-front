@@ -46,7 +46,8 @@ export type DragQaItem = {
   itemId: string; 
 };
 
-const StaticItem = React.memo(({ title, contents, itemId, onClickDelete, onClickEdit }: StaticItemProps) => {
+const StaticItem = React.memo(
+  function StaticItem ({ title, contents, itemId, onClickDelete, onClickEdit }: StaticItemProps) {
   return (
     <div className="card">
       <div className="card-body">
@@ -64,7 +65,7 @@ const StaticItem = React.memo(({ title, contents, itemId, onClickDelete, onClick
   )
 });
 
-const EditingItem = React.memo((props: EditingProps) => {
+const EditingItem = React.memo(function EditingItem(props: EditingProps) {
   const [title, setTitle] = useState(props.title);
   const [contents, setContents] = useState(props.contents);
 
@@ -98,7 +99,8 @@ const EditingItem = React.memo((props: EditingProps) => {
   );
 });
 
-export const QaItem = React.memo(({
+export const QaItem = React.memo(
+function QaItem ({
   title,
   contents,
   itemId,
@@ -111,7 +113,7 @@ export const QaItem = React.memo(({
   moveQaItem,
   isNewItem,
   notifyEditingState
-}: QaDisplayItem) => {
+}: QaDisplayItem) {
   const [isEditing, setIsEditing] = useState(isNewItem);
 
   const onClickCancel = useCallback(() => {
@@ -121,7 +123,7 @@ export const QaItem = React.memo(({
       setIsEditing(false);
     }
     notifyEditingState(false);
-  }, [itemId, topicIndex, index, isNewItem]);
+  }, [itemId, topicIndex, index, isNewItem, notifyEditingState, requestAbortQaItem]);
 
   const onClickDone = useCallback((newContents: QaContents) => {
     if (isNewItem) {
@@ -130,7 +132,7 @@ export const QaItem = React.memo(({
     requestUpdateItem(topicIndex, index, newContents);
     setIsEditing(false);
     notifyEditingState(false);
-  }, [itemId, topicIndex, index, isNewItem]);
+  }, [itemId, topicIndex, index, isNewItem, requestFixQaItem, notifyEditingState, requestUpdateItem]);
 
 
   const ref = useRef<HTMLDivElement>(null);
