@@ -61,7 +61,8 @@ export const ChangePasswordModal = () => {
           {formatMessage({
             id:
               "Make sure it’s at least 8 characters including a number and a lowercase letter.",
-            defaultMessage: "Confirm new password",
+            defaultMessage:
+              "Make sure it’s at least 8 characters including a number and a lowercase letter.",
           })}
         </p>
       </Modal.Body>
