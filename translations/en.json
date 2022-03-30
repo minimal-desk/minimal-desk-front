@@ -12,5 +12,10 @@
   "Delete Project":"Delete Project",
   "FAQ page":"FAQ page",
   "Add project":"Add project",
-  "Projects":"Projects"
+  "Projects":"Projects",
+  "Change Password":"Change Password",
+  "Current password":"Current password",
+  "New Password": "New password",
+  "Confirm new password": "Confirm new password",
+  "Make sure it’s at least 8 characters including a number and a lowercase letter.":"Make sure it’s at least 8 characters including a number and a lowercase letter."
 }
